@@ -727,6 +727,7 @@ interface Date {
     getFullYear(): number;
     /** Gets the year using Universal Coordinated Time (UTC). */
     getUTCFullYear(): number;
+    
     /** Gets the month, using local time. */
     getMonth(): number;
     /** Gets the month of a Date object using Universal Coordinated Time (UTC). */
@@ -737,6 +738,8 @@ interface Date {
     getUTCDate(): number;
     /** Gets the day of the week, using local time. */
     getDay(): number;
+    /** Gets the years difference from 1900, using local time. */
+    getYear(): number;
     /** Gets the day of the week using Universal Coordinated Time (UTC). */
     getUTCDay(): number;
     /** Gets the hours in a date, using local time. */
