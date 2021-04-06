@@ -2,6 +2,8 @@ namespace ts {
     /**
      * Associates a node with the current transformation, initializing
      * various transient transformation properties.
+     * 
+     * This function should only be called when writing to an emit node.
      * @internal
      */
     export function getOrCreateEmitNode(node: Node): EmitNode {
@@ -19,6 +21,9 @@ namespace ts {
             }
 
             node.emitNode = {} as EmitNode;
+        }
+        else {
+            Debug.assert(!(node.emitNode?.flags! & EmitFlags.Reusable), "Invalid attempt to modify a reusable node.");
         }
 
         return node.emitNode;

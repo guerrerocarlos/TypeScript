@@ -18,7 +18,7 @@ namespace ts {
                     : factory.createElementAccessExpression(target, memberName),
                 memberName
             );
-            getOrCreateEmitNode(expression).flags |= EmitFlags.NoNestedSourceMaps;
+            addEmitFlags(expression, EmitFlags.NoNestedSourceMaps);
             return expression;
         }
     }
@@ -479,8 +479,7 @@ namespace ts {
 
             if (create) {
                 const parseNode = getOriginalNode(node, isSourceFile);
-                const emitNode = getOrCreateEmitNode(parseNode);
-                return emitNode.externalHelpersModuleName || (emitNode.externalHelpersModuleName = factory.createUniqueName(externalHelpersModuleNameText));
+                return parseNode?.emitNode?.externalHelpersModuleName || (getOrCreateEmitNode(parseNode).externalHelpersModuleName = factory.createUniqueName(externalHelpersModuleNameText));
             }
         }
     }

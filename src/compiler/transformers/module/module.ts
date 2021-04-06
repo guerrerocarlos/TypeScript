@@ -42,6 +42,7 @@ namespace ts {
         context.enableSubstitution(SyntaxKind.ShorthandPropertyAssignment); // Substitutes shorthand property assignments for imported/exported symbols.
         context.enableEmitNotification(SyntaxKind.SourceFile); // Restore state when substituting nodes in a file.
 
+        let zeroLiteral: NumericLiteral | undefined;
         const moduleInfoMap: ExternalModuleInfo[] = []; // The ExternalModuleInfo for each file.
         const deferredExports: (Statement[] | undefined)[] = []; // Exports to defer until an EndOfDeclarationMarker is found.
 
@@ -1811,16 +1812,24 @@ namespace ts {
             return result;
         }
 
+        function getZeroLiteral() {
+            if (!zeroLiteral) {
+                zeroLiteral = factory.createNumericLiteral(0);
+                setEmitFlags(zeroLiteral, EmitFlags.Reusable);
+            }
+            return zeroLiteral;
+        }
+
         function substituteCallExpression(node: CallExpression) {
             if (isIdentifier(node.expression) && getImportOrExportBindingReference(node.expression, /*removeEntry*/ false)) {
                 return isCallChain(node) ?
                     factory.updateCallChain(node,
-                        setTextRange(factory.createComma(factory.createNumericLiteral(0), node.expression), node.expression),
+                        setTextRange(factory.createComma(getZeroLiteral(), node.expression), node.expression),
                         node.questionDotToken,
                         /*typeArguments*/ undefined,
                         node.arguments) :
                     factory.updateCallExpression(node,
-                        setTextRange(factory.createComma(factory.createNumericLiteral(0), node.expression), node.expression),
+                        setTextRange(factory.createComma(getZeroLiteral(), node.expression), node.expression),
                         /*typeArguments*/ undefined,
                         node.arguments);
             }
@@ -1831,7 +1840,7 @@ namespace ts {
             if (isIdentifier(node.tag) && getImportOrExportBindingReference(node.tag, /*removeEntry*/ false)) {
                 return factory.updateTaggedTemplateExpression(
                     node,
-                    setTextRange(factory.createComma(factory.createNumericLiteral(0), node.tag), node.tag),
+                    setTextRange(factory.createComma(getZeroLiteral(), node.tag), node.tag),
                     /*typeArguments*/ undefined,
                     node.template);
             }
